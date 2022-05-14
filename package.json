@@ -1,0 +1,30 @@
+{
+    "name": "game_of_life",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "personal version of the famous game of life",
+    "main": ".eslintrc.js",
+    "scripts": {
+        "test": "jest --watchAll --coverage",
+        "prepare": "husky install"
+    },
+    "author": "Alejandro Muñoz",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/plugin-transform-modules-commonjs": "^7.17.9",
+        "eslint": "^8.15.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-plugin-import": "^2.26.0",
+        "husky": "^8.0.1",
+        "jest": "^28.1.0"
+    },
+    "babel": {
+        "env": {
+            "test": {
+                "plugins": [
+                    "@babel/plugin-transform-modules-commonjs"
+                ]
+            }
+        }
+    }
+}
