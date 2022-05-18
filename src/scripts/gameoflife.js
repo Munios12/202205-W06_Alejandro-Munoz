@@ -6,6 +6,7 @@ class Cell {
         this.neighbors = neighbors;
     }
 }
+
 const numColumns = 3;
 const numRows = 3;
 const arrayCells = [[], [], []];
@@ -15,6 +16,7 @@ let gameBoard = [
     [0, 0, 0],
     [0, 0, 0],
 ];
+
 const addCellsToArray = () => {
     for (let i = 0; i < numColumns; i++) {
         for (let j = 0; j < numRows; j++) {
@@ -36,71 +38,108 @@ const renderGeneration = (arrayCells, gameBoard) => {
     });
 };
 
-const calculateNeighbors = (gameBoard, numRows, numColum) => {
-    // console.log(arrayCells[1][1]);
-
+const calculateAliveNeighbors = () => {
     for (let i = 0; i < arrayCells.length; i++) {
-        console.log("---------------");
         for (let j = 0; j < arrayCells.length; j++) {
-            let sum;
             let currentCell = arrayCells[i][j];
-            let currentCell__coorX = currentCell.coorX;
-            let currentCell__coorY = currentCell.coorY;
+            if (i === 0 && j === 0) {
+                //Esquina sup izq
+                currentCell.neighbors =
+                    arrayCells[i + 1][j].isAlive +
+                    arrayCells[i][j + 1].isAlive +
+                    arrayCells[i + 1][j + 1].isAlive;
+            } else if (i === 0 && j === arrayCells.length - 1) {
+                // esquina sup derecha PROBLEMA DA 3
 
-            if (
-                currentCell__coorX - 1 < 0 ||
-                currentCell__coorY - 1 < 0 ||
-                currentCell__coorX + 1 >= numColumns ||
-                currentCell__coorY + 1 >= numRows
+                currentCell.neighbors =
+                    arrayCells[i + 1][j].isAlive +
+                    arrayCells[i][j - 1].isAlive +
+                    arrayCells[i + 1][j - 1].isAlive;
+            } else if (i === arrayCells.length - 1 && j === 0) {
+                //esquina abajo izq
+                currentCell.neighbors =
+                    arrayCells[i - 1][j].isAlive +
+                    arrayCells[i][j + 1].isAlive +
+                    arrayCells[i - 1][j + 1].isAlive;
+            } else if (
+                i === arrayCells.length - 1 &&
+                j === arrayCells.length - 1
             ) {
-                console.log("estas en el borde");
+                //esquina abajo derecha
+                currentCell.neighbors =
+                    arrayCells[i - 1][j].isAlive +
+                    arrayCells[i - 1][j - 1].isAlive +
+                    arrayCells[i][j - 1].isAlive;
+            } else if (j === 0) {
+                //Borde Izquierdo
+                currentCell.neighbors =
+                    arrayCells[i - 1][j].isAlive +
+                    arrayCells[i - 1][j + 1].isAlive +
+                    arrayCells[i][j + 1].isAlive +
+                    arrayCells[i + 1][j + 1].isAlive +
+                    arrayCells[i + 1][j].isAlive;
+            } else if (j === arrayCells.length - 1) {
+                //Borde derecho
+                currentCell.neighbors =
+                    arrayCells[i - 1][j].isAlive +
+                    arrayCells[i - 1][j - 1].isAlive +
+                    arrayCells[i][j - 1].isAlive +
+                    arrayCells[i + 1][j - 1].isAlive +
+                    arrayCells[i + 1][j].isAlive;
+            } else if (i === 0) {
+                //Borde superior
+                currentCell.neighbors =
+                    arrayCells[i][j - 1].isAlive +
+                    arrayCells[i + 1][j - 1].isAlive +
+                    arrayCells[i + 1][j].isAlive +
+                    arrayCells[i + 1][j + 1].isAlive +
+                    arrayCells[i][j + 1].isAlive;
+            } else if (i === arrayCells.length - 1) {
+                //Borde inferior
+                currentCell.neighbors =
+                    arrayCells[i][j - 1].isAlive +
+                    arrayCells[i - 1][j - 1].isAlive +
+                    arrayCells[i - 1][j].isAlive +
+                    arrayCells[i - 1][j + 1].isAlive +
+                    arrayCells[i][j + 1].isAlive;
             } else {
-                sum = 8;
-                console.log("centro");
+                //no es borde ni esquina
+                currentCell.neighbors =
+                    arrayCells[i - 1][j - 1].isAlive +
+                    arrayCells[i - 1][j].isAlive +
+                    arrayCells[i - 1][j + 1].isAlive +
+                    arrayCells[i][j + 1].isAlive +
+                    arrayCells[i + 1][j + 1].isAlive +
+                    arrayCells[i + 1][j].isAlive +
+                    arrayCells[i + 1][j - 1].isAlive +
+                    arrayCells[i][j - 1].isAlive;
             }
-            console.log([arrayCells[i][j].coorX], [arrayCells[i][j].coorY]);
-            console.log("Vecinos: ", sum);
+
+            //Reglas del juego
+            if (currentCell.isAlive === 0) {
+                //Nace cuando tiene exactamente 3 celulas vivas.
+                currentCell.neighbors === 3
+                    ? (currentCell.isAlive = 1)
+                    : (currentCell.isAlive = 0);
+            } else {
+                //Muere si tiene < 2 o > 3 celulas vivas a su alrededor.
+                currentCell.neighbors < 2 || currentCell.neighbors > 3
+                    ? (currentCell.isAlive = 0)
+                    : (currentCell.isAlive = 1);
+            }
         }
     }
 };
 
 const gameOfLife = () => {
-    //Añaden celulas a la array
     addCellsToArray();
-    console.table(gameBoard);
-    //renderizar el estado de las celulas
     renderGeneration(arrayCells, gameBoard);
-
-    console.log(arrayCells);
     console.table(gameBoard);
 
-    //Crear una nueva generacion
-    //Calcular Vecinos
-    calculateNeighbors(gameBoard, numRows, numColumns);
-    //Aplicar reglas de la vida
-    // applyRules();
-
-    // console.log(currentNeighbors);
-    //  setInterval(() => {
-    //     Evaluar todas las celulas
-
-    //     let fila1 = celArray[0].map((cel) => {
-    //         let newCel = evalAdjacentCells(cel, gameBoard);
-    //         return newCel;
-    //     });
-    //     let fila2 = celArray[1].map((cel) => {
-    //         let newCel = evalAdjacentCells(cel, gameBoard);
-    //         return newCel;
-    //     });
-    //     let fila3 = celArray[2].map((cel) => {
-    //         let newCel = evalAdjacentCells(cel, gameBoard);
-    //         return newCel;
-    //     });
-
-    //     let newArr = [fila1, fila2, fila3];
-    //     Representar nuevo tablero
-
-    //     console.table(newArr);
+    // setInterval(() => {
+    calculateAliveNeighbors();
+    renderGeneration(arrayCells, gameBoard);
+    console.table(gameBoard);
     // }, 2000);
 };
 
